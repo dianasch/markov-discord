@@ -2,6 +2,9 @@
 
 import sys
 from random import choice
+import discord
+import os
+
 
 
 def open_and_read_file(filenames):
@@ -64,3 +67,22 @@ text = open_and_read_file(filenames)
 
 # Get a Markov chain
 chains = make_chains(text)
+
+client = discord.Client()
+
+@client.event
+async def on_ready():
+    print(f'Successfully connected! Logged in as {client.user}.')
+
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+
+    if message.content:
+        await message.channel.send(make_text(chains))
+
+token = os.environ.get('DISCORD_TOKEN')
+
+client.run(token)
