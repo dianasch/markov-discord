@@ -4,6 +4,7 @@ import sys
 from random import choice
 import discord
 import os
+from discord.ext import commands
 
 
 
@@ -68,7 +69,9 @@ text = open_and_read_file(filenames)
 # Get a Markov chain
 chains = make_chains(text)
 
-client = discord.Client()
+# client = discord.Client()
+
+client = commands.Bot(command_prefix=commands.when_mentioned_or("!"))
 
 @client.event
 async def on_ready():
@@ -77,11 +80,12 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    if message.author == client.user:
-        return
+    # if message.author == client.user:
+    #     return
 
-    if message.content:
-        await message.channel.send(make_text(chains))
+    for x in message.mentions:
+        if(x==client.user):
+            await message.channel.send(make_text(chains))
 
 token = os.environ.get('DISCORD_TOKEN')
 
